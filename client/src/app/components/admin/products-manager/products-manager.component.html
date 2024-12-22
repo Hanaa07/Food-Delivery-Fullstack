@@ -1,0 +1,95 @@
+<mat-card>
+    <mat-form-field>
+      <mat-label>Szukaj</mat-label>
+      <input matInput (keyup)="applyFilter($event)" placeholder="Napoje" #input />
+    </mat-form-field>
+  
+    <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+      <!-- Position Column -->
+      <ng-container matColumnDef="id">
+        <th mat-header-cell *matHeaderCellDef>No.</th>
+        <td mat-cell *matCellDef="let element">{{ element.id }}</td>
+      </ng-container>
+  
+      <!-- Name Column -->
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef>Name</th>
+        <td mat-cell *matCellDef="let element">{{ element.name }}</td>
+      </ng-container>
+  
+      <!-- Price Column -->
+      <ng-container matColumnDef="unit_price">
+        <th mat-header-cell *matHeaderCellDef>Price</th>
+        <td mat-cell *matCellDef="let element">{{ element.unit_price }}</td>
+      </ng-container>
+  
+      <!-- Available Column -->
+      <ng-container matColumnDef="available">
+        <th mat-header-cell *matHeaderCellDef>Available</th>
+        <td mat-cell *matCellDef="let element">{{ element.available }}</td>
+      </ng-container>
+  
+      <ng-container matColumnDef="action">
+        <th mat-header-cell *matHeaderCellDef>Action</th>
+        <td mat-cell *matCellDef="let row">
+          <div class="actions">
+            <button mat-raised-button color="primary" (click)="editProduct(row)">Edit</button
+            ><button mat-raised-button color="warn" (click)="deleteProduct(row)">Delete</button>
+          </div>
+        </td>
+      </ng-container>
+  
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+  
+      <!-- Row shown when there is no matching data. -->
+      <tr class="mat-row" *matNoDataRow>
+        <td class="mat-cell" colspan="4">
+          No data matching the filter "{{ input.value }}"
+        </td>
+      </tr>
+    </table>
+    <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
+   <form [formGroup]="productFormGroup" (ngSubmit)="addProduct()">
+     <div formGroupName="product" class="form-area">
+      <h3>Dodaj produkt</h3>
+      <mat-form-field appearance="fill">
+        <mat-label>Nazwa</mat-label>
+        <input matInput formControlName="name">
+      </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>Opis</mat-label>
+        <input matInput formControlName="description">
+      </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>Cena</mat-label>
+        <input matInput formControlName="unit_price" type="number">
+      </mat-form-field>
+      <div class="row">
+        <div class="col-md-2"><label>Dostępny</label></div>
+        <div class="col-md-9">
+            <div class="input-space">
+            <input formControlName="available" type="checkbox">
+          </div>
+        </div>
+      </div>
+      <mat-form-field appearance="fill">
+        <mat-label>Adres obrazka</mat-label>
+        <input matInput formControlName="imgUrl">
+      </mat-form-field>
+      <mat-form-field appearance="fill">
+            <mat-label>Nazwa kategorii</mat-label>
+            <mat-select formControlName="category">
+              <mat-option
+                *ngFor="let category of categories"
+                [value]="category"
+              >
+                {{ category.name }}
+              </mat-option>
+            </mat-select>
+      </mat-form-field>
+          <button type="submit" class="btn btn-info">Dodaj produkt</button>
+      </div>
+  
+   </form>
+  </mat-card>
