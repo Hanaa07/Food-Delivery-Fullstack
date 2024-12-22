@@ -1,0 +1,9 @@
+com.emsi.server.config.DataRestConfig#exposeIds(LRepositoryRestConfiguration;)V
+false
+71338f0268b86d16fd30fe2874b10127
+java.util.ArrayList#<init>()V
+java.util.ArrayList#instance-init#
+==
+!unknownMethod! !unknownMethod!
+add java.util.List#add(Ljava/lang/Object;)Z
+toArray java.util.List#toArray([Ljava/lang/Object;)[Ljava/lang/Object;

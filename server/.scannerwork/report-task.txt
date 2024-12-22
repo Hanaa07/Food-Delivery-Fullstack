@@ -1,0 +1,7 @@
+organization=food-delivery-fullstack
+projectKey=com.emsi:server
+serverUrl=https://sonarcloud.io
+serverVersion=8.0.0.58741
+dashboardUrl=https://sonarcloud.io/dashboard?id=com.emsi%3Aserver
+ceTaskId=AZPpf65_CBEeSFnULdW2
+ceTaskUrl=https://sonarcloud.io/api/ce/task?id=AZPpf65_CBEeSFnULdW2
