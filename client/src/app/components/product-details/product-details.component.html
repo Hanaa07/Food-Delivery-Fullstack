@@ -1,0 +1,15 @@
+
+<div class="detail-section">
+    <div class="container-fluid">
+        <img src="{{product.imgUrl}}" class="detail-img" width="25%" height="25%">
+        <h3>{{product.name}}</h3>
+        <div class="price">
+          <b>{{product.unit_price | currency:'PLN'}}</b>
+        </div>
+        <button mat-raised-button color="primary">Dodaj do zamówienia</button>
+        <hr>
+        <h4>Opis</h4>
+        <p>{{product.description}}</p>
+        <a routerLink="/products" class="mt-5">Wróć</a>
+    </div>
+</div>
