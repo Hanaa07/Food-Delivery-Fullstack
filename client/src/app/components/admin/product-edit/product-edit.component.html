@@ -1,0 +1,54 @@
+<form [formGroup]="productForm" (ngSubmit)="updateProduct()">
+  <div formGroupName="product" clas="form-area">
+    <h3>Edit</h3>
+    <div class="row">
+      <div class="col-md-2"><label>ID</label></div>
+      <div class="col-md-9">
+        <div class="input-space">
+          <input formControlName="id" type="number" />
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-2"><label>Name</label></div>
+      <div class="col-md-9">
+        <div class="input-space">
+          <input formControlName="name" type="text" />
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-2"><label>Description</label></div>
+      <div class="col-md-9">
+        <div class="input-space">
+          <input formControlName="description" type="text" />
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-2"><label>Price</label></div>
+      <div class="col-md-9">
+        <div class="input-space">
+          <input formControlName="unit_price" type="number" />
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-2"><label>Available</label></div>
+      <div class="col-md-9">
+        <div class="input-space">
+          <input formControlName="available" type="checkbox" />
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-2"><label>Image address</label></div>
+      <div class="col-md-9">
+        <div class="input-space">
+          <input formControlName="imgUrl" type="text" />
+        </div>
+      </div>
+    </div>
+    <button type="submit" class="btn btn-info">Add product</button>
+  </div>
+</form>
