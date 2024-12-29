@@ -1,5 +1,0 @@
-com.emsi.server.service.OrderServiceImpl#generateOrderTrackingNumber()Ljava/lang/String;
-false
-6296214abb2042d0444d9315fa2bcca6
-java.util.UUID#randomUUID()Ljava/util/UUID;
-java.util.UUID#toString()Ljava/lang/String;

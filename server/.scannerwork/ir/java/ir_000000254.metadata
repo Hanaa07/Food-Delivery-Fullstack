@@ -1,5 +1,0 @@
-com.emsi.server.controller.OrderController#placeOrder(Lcom/emsi/server/dto/Purchase;)Lcom/emsi/server/dto/PurchaseResponse;
-false
-5f602e7db64bf92aceb2b0d57d25f5c7
-==
-placeOrder com.emsi.server.service.OrderService#placeOrder(Lcom/emsi/server/dto/Purchase;)Lcom/emsi/server/dto/PurchaseResponse;

@@ -1,4 +1,0 @@
-com.emsi.server.config.DataRestConfig#configureRepositoryRestConfiguration(LRepositoryRestConfiguration;LCorsRegistry;)V
-false
-c4b77d1fbb25e3dab102e05333e779e5
-com.emsi.server.config.DataRestConfig#exposeIds(LRepositoryRestConfiguration;)V
