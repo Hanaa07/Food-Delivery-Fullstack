@@ -1,7 +1,6 @@
 package com.emsi.server.entity;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import jakarta.persistence.*;
 import java.util.HashSet;
@@ -11,6 +10,9 @@ import java.util.Set;
 @Table(name="user")
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class User {
 
     @Id

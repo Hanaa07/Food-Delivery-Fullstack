@@ -1,24 +1,23 @@
 package com.emsi.server.repository;
 
+import com.emsi.server.entity.State;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import pl.tiuprojekt.sandwitch.entity.State;
 
-import javax.transaction.Transactional;
+import jakarta.transaction.Transactional;
 import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @SpringBootTest
-public class StateRepoTests
-{
-    private final Logger log = LoggerFactory.getLogger(StateRepoTests.class);
+public class StateRepositoryTest {
+    private final Logger log = LoggerFactory.getLogger(StateRepositoryTest.class);
 
     @Autowired
-    private StateRepo stateRepo;
+    private StateRepository stateRepo;
 
     @Test
     @Transactional

@@ -1,106 +1,127 @@
 package com.emsi.server.repository;
 
+import com.emsi.server.entity.*;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import pl.tiuprojekt.sandwitch.entity.Order;
-import pl.tiuprojekt.sandwitch.entity.OrderItem;
 
-import javax.transaction.Transactional;
+import jakarta.transaction.Transactional;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+
 @SpringBootTest
-public class OrderItemRepoTests {
+public class OrderItemRepositoryTest {
 
-    private final Logger log = LoggerFactory.getLogger(OrderItemRepoTests.class);
+    private final Logger log = LoggerFactory.getLogger(OrderItemRepositoryTest.class);
 
     @Autowired
-    private OrderItemRepo orderItemRepo;
+    private OrderItemRepository orderItemRepo;
     @Autowired
-    private  OrderRepo orderRepo;
+    private OrderRepository orderRepo;
     @Autowired
-    private UserRepo userRepo;
+    private UserRepository userRepo;
     @Autowired
-    private AddressRepo addressRepo;
+    private AddressRepository addressRepo;
+
+    private User savedUser;
+    private Address savedAddress;
+
+    @BeforeEach
+    void setUp() {
+        // Create and save User
+        User user = User.builder().name("User").build();
+        savedUser = userRepo.save(user);
+
+        // Create and save Address
+        Address address = Address.builder().street("Street").city("City").build();
+        savedAddress = addressRepo.save(address);
+    }
 
     @Test
     @Transactional
-    public void insertAndCheckOrderItem()
-    {
-        OrderItem orderItem = new OrderItem();
-        Set<OrderItem> orderItems = new HashSet<>();
+    public void insertAndCheckOrderItem() {
+        // Ensure Order exists or create one
+        Optional<Order> existingOrder = orderRepo.findById(1L);
+        Order order1;
+        if (existingOrder.isEmpty()) {
+            order1 = new Order();
+            order1.setUser(savedUser); // Use the saved User
+            order1.setAddress(savedAddress); // Use the saved Address
+            order1.setDate(new Date());
+            order1.setOrder_tracking_number("12345-ABCDE");
+            order1.setStatus(true);
+            order1.setTotal_price(1000);
+            order1.setTotal_quantity(10);
+            order1 = orderRepo.save(order1);
+        } else {
+            order1 = existingOrder.get();
+        }
 
-       if( !(Optional.of(orderItemRepo.findById(1L).get()).isPresent()))
-        {
-            OrderItem orderItem1 =new OrderItem();
-            orderItem1.setQuantity(100);
-            orderItem1.setUnit_price(1000);
+        // Ensure another Order exists or create one
+        Optional<Order> secondOrder = orderRepo.findById(2L);
+        Order order2;
+        if (secondOrder.isEmpty()) {
+            order2 = new Order();
+            order2.setUser(savedUser); // Use the saved User
+            order2.setAddress(savedAddress); // Use the saved Address
+            order2.setDate(new Date());
+            order2.setOrder_tracking_number("67890-FGHIJ");
+            order2.setStatus(true);
+            order2.setTotal_price(2000);
+            order2.setTotal_quantity(20);
+            order2 = orderRepo.save(order2);
+        } else {
+            order2 = secondOrder.get();
+        }
 
+        // Ensure OrderItem exists or create one
+        Optional<OrderItem> existingOrderItem = orderItemRepo.findById(1L);
+        OrderItem orderItem;
+        if (existingOrderItem.isEmpty()) {
+            orderItem = new OrderItem();
+            orderItem.setQuantity(100);
+            orderItem.setUnit_price(1000);
+            orderItem.setOrder(order1); // Associate with the first Order
+            orderItem.setProduct_id(1);
+            orderItem = orderItemRepo.save(orderItem);
+        } else {
+            orderItem = existingOrderItem.get();
+        }
 
-        }else  orderItems.add(orderItemRepo.findById(1L).get());
+        // Assertions for initial OrderItem
+        log.info("{} | {} | {} | {}", orderItem.getId(), orderItem.getUnit_price(), orderItem.getQuantity(), orderItem.getOrder());
+        assertThat(orderItem.getId()).isNotNull();
+        assertThat(orderItem.getUnit_price()).isEqualTo(1000);
+        assertThat(orderItem.getQuantity()).isEqualTo(100);
 
-        Date date = new Date();
-        Order orderN1 = new Order();
-        Optional<Order> orderOptional = orderRepo.findById(1L);
-        if(!orderOptional.isPresent()) {
+        // Modify and re-save OrderItem
+        orderItem.setQuantity(9);
+        orderItem.setUnit_price(90);
+        orderItem.setOrder(order2); // Associate with the second Order
+        orderItem.setProduct_id(2);
+        OrderItem updatedOrderItem = orderItemRepo.save(orderItem);
 
-            orderN1.setUser(userRepo.findById(1L).get());
-            orderN1.setOrderItems(orderItems);
-            orderN1.setAddress(addressRepo.findById(1L).get());
-            orderN1.setDate(date);
-            orderN1.setOrder_tracking_number("1345-14010fj13ifj1ifi12f1");
-            orderN1.setStatus(true);
-            orderN1.setTotal_price(500);
-            orderN1.setTotal_quantity(50);
-        }else  orderN1=orderOptional.get();
-        Order orderN2=new Order();
-        Optional<Order> orderOptional2 = orderRepo.findById(2L);
-        if(!orderOptional2.isPresent()) {
+        // Assertions for updated OrderItem
+        log.info("{} | {} | {} | {}", updatedOrderItem.getId(), updatedOrderItem.getUnit_price(), updatedOrderItem.getQuantity(), updatedOrderItem.getOrder());
+        assertThat(updatedOrderItem.getId()).isNotNull();
+        assertThat(updatedOrderItem.getUnit_price()).isEqualTo(90);
+        assertThat(updatedOrderItem.getQuantity()).isEqualTo(9);
 
-            orderN2.setUser(userRepo.findById(1L).get());
-            orderN2.setOrderItems(orderItems);
-            orderN2.setAddress(addressRepo.findById(1L).get());
-            orderN2.setDate(date);
-            orderN2.setOrder_tracking_number("erper-23r23rp23[r23");
-            orderN2.setStatus(true);
-            orderN2.setTotal_price(1000);
-            orderN2.setTotal_quantity(100);
-        }else  orderN2=orderOptional2.get();
-
-
-        orderItem.setUnit_price(100);
-        orderItem.setQuantity(10);
-        orderItem.setOrder(orderN1);
-        orderItem.setProduct_id(1);
-
-
-        OrderItem orderItemSaved = orderItemRepo.save(orderItem);
-        log.info(orderItemSaved.getId()+" | "+orderItemSaved.getUnit_price()+" | "+orderItemSaved.getQuantity()+ " | " +orderItemSaved.getOrder());
-
-        assertThat(orderItemSaved.getId()).isNotEqualTo(null);
-        assertThat(orderItemSaved.getUnit_price()).isEqualTo(100);
-        assertThat(orderItemSaved.getQuantity()).isEqualTo(10);
-
-        log.info("Change order_item ");
-        orderItemSaved.setQuantity(9);
-        orderItemSaved.setUnit_price(90);
-        orderItemSaved.setOrder(orderN2);
-        orderItemSaved.setProduct_id(2);
-        assertThat(orderItemSaved.getId()).isNotEqualTo(null);
-        assertThat(orderItemSaved.getUnit_price()).isEqualTo(90);
-        assertThat(orderItemSaved.getQuantity()).isEqualTo(9);
-        log.info(orderItemSaved.getId()+" | "+orderItemSaved.getUnit_price()+" | "+orderItemSaved.getQuantity()+ " | " +orderItemSaved.getOrder());
-        Long orderId=orderItemSaved.getId();
-        orderItemRepo.delete(orderItemSaved);
+        // Clean up by deleting the OrderItem
+        Long orderItemId = updatedOrderItem.getId();
+        orderItemRepo.delete(updatedOrderItem);
         log.info("Object deleted from repository");
-        Optional<OrderItem> serchByID = orderItemRepo.findById(orderId);
+
+        // Verify deletion
+        Optional<OrderItem> searchById = orderItemRepo.findById(orderItemId);
+        assertThat(searchById).isEmpty();
         log.info("Object not found. End of test!");
-
     }
-
 }

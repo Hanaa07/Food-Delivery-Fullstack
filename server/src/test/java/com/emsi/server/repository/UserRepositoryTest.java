@@ -1,21 +1,22 @@
 package com.emsi.server.repository;
 
+import com.emsi.server.entity.User;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import pl.tiuprojekt.sandwitch.entity.User;
 
-import javax.transaction.Transactional;
+import jakarta.transaction.Transactional;
+
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @SpringBootTest
-public class UserRepoTests
-{
-    private final Logger log = LoggerFactory.getLogger(UserRepoTests.class);
+public class UserRepositoryTest {
+    private final Logger log = LoggerFactory.getLogger(UserRepositoryTest.class);
 
     @Autowired
-    private UserRepo userRepo;
+    private UserRepository userRepo;
 
     @Test
     @Transactional

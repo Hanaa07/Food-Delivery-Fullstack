@@ -1,26 +1,28 @@
 package com.emsi.server.repository;
 
+import com.emsi.server.entity.Category;
+import com.emsi.server.entity.Product;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import pl.tiuprojekt.sandwitch.entity.Category;
-import pl.tiuprojekt.sandwitch.entity.Product;
 
-import javax.transaction.Transactional;
+import jakarta.transaction.Transactional;
 import java.util.stream.StreamSupport;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+
 @SpringBootTest
-public class ProductRepoTests
+public class ProductRepositoryTest
 {
-    private final Logger log = LoggerFactory.getLogger(ProductRepoTests.class);
+    private final Logger log = LoggerFactory.getLogger(ProductRepositoryTest.class);
 
     @Autowired
-    private ProductRepo productRepo;
+    private ProductRepository productRepo;
 
     @Autowired
-    private CategoryRepo categoryRepo;
+    private CategoryRepository categoryRepo;
 
     @Test
     @Transactional

@@ -10,4 +10,6 @@ import java.util.Optional;
 @RepositoryRestResource(collectionResourceRel = "states",path = "states")
 @CrossOrigin(origins = "http://localhost:4200")
 public interface StateRepository extends CrudRepository<State,Long>{
+    Optional<State> findByName(String name);
+    boolean existsByName(String name);
 }

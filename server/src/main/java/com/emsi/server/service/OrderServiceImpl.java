@@ -2,145 +2,46 @@ package com.emsi.server.service;
 
 import com.emsi.server.dto.Purchase;
 import com.emsi.server.dto.PurchaseResponse;
-import com.emsi.server.entity.Address;
 import com.emsi.server.entity.Order;
 import com.emsi.server.entity.OrderItem;
 import com.emsi.server.entity.User;
 import com.emsi.server.repository.UserRepository;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
+import jakarta.transaction.Transactional;
 import java.util.Set;
+import java.util.UUID;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.*;
-
-class OrderServiceImplTest {
-
-    @Mock
+@Service
+public class OrderServiceImpl  implements OrderService {
     private UserRepository userRepository;
 
-    @InjectMocks
-    private OrderServiceImpl orderService;
-
-    private User mockUser;
-    private Order mockOrder;
-    private Address mockAddress;
-    private OrderItem mockOrderItem;
-
-    @BeforeEach
-    void setUp() {
-        MockitoAnnotations.openMocks(this);
-
-        // Initialize mock entities
-        mockUser = User.builder()
-                .id(1L)
-                .email("test@example.com")
-                .name("Test User")
-                .build();
-
-        mockOrder = new Order();
-        mockOrder.setId(1L);
-
-        mockAddress = Address.builder()
-                .id(1L)
-                .city("Test City")
-                .street("Test Street")
-                .zip_code("12345")
-                .build();
-
-        mockOrderItem = new OrderItem();
-        mockOrderItem.setId(1L);
-        mockOrderItem.setProduct_id(101);
-        mockOrderItem.setQuantity(2);
-        mockOrderItem.setUnit_price(50);
-
-        // Set up relationships
-        Set<OrderItem> orderItems = new HashSet<>();
-        orderItems.add(mockOrderItem);
-
-        mockOrder.setOrderItems(orderItems);
-        mockOrder.setAddress(mockAddress);
-
-        mockUser.add(mockOrder);
+    public OrderServiceImpl(UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 
-    @Test
-    void testPlaceOrder_NewUser() {
-        // Mock purchase
-        Purchase purchase = new Purchase();
-        purchase.setOrder(mockOrder);
-        purchase.setOrderItems(mockOrder.getOrderItems());
-        purchase.setOrderAddress(mockOrder.getAddress());
-        purchase.setCustomer(mockUser);
-
-        // Mock repository behavior
-        when(userRepository.findByEmail(mockUser.getEmail())).thenReturn(null);
-        when(userRepository.save(mockUser)).thenReturn(mockUser);
-
-        // Call the service method
-        PurchaseResponse response = orderService.placeOrder(purchase);
-
-        // Verify interactions and assert results
-        verify(userRepository, times(1)).findByEmail(mockUser.getEmail());
-        verify(userRepository, times(1)).save(mockUser);
-        assertThat(response.getOrderTrackingNumber()).isNotNull();
+    private String generateOrderTrackingNumber() {
+        return UUID.randomUUID().toString();
     }
+    @Override
+    @Transactional
+    public PurchaseResponse placeOrder(Purchase purchase) {
 
-    @Test
-    void testPlaceOrder_ExistingUser() {
-        // Mock existing user in the database
-        User existingUser = User.builder()
-                .id(1L)
-                .email("test@example.com")
-                .name("Existing User")
-                .build();
-
-        // Mock purchase
-        Purchase purchase = new Purchase();
-        purchase.setOrder(mockOrder);
-        purchase.setOrderItems(mockOrder.getOrderItems());
-        purchase.setOrderAddress(mockOrder.getAddress());
-        purchase.setCustomer(mockUser);
-
-        // Mock repository behavior
-        when(userRepository.findByEmail(mockUser.getEmail())).thenReturn(existingUser);
-        when(userRepository.save(existingUser)).thenReturn(existingUser);
-
-        // Call the service method
-        PurchaseResponse response = orderService.placeOrder(purchase);
-
-        // Verify interactions and assert results
-        verify(userRepository, times(1)).findByEmail(mockUser.getEmail());
-        verify(userRepository, times(1)).save(existingUser);
-        assertThat(response.getOrderTrackingNumber()).isNotNull();
-    }
-
-    @Test
-    void testPlaceOrder_NullOrder() {
-        // Mock purchase with null order
-        Purchase purchase = new Purchase();
-        purchase.setOrder(null);
-        purchase.setCustomer(mockUser);
-
-        try {
-            orderService.placeOrder(purchase);
-        } catch (NullPointerException e) {
-            assertThat(e).hasMessageContaining("Order must not be null");
+        Order order = purchase.getOrder();
+        String orderTrackingNumber = generateOrderTrackingNumber();
+        order.setOrder_tracking_number(orderTrackingNumber);
+        Set<OrderItem> orderItems = purchase.getOrderItems();
+        orderItems.forEach(item -> order.add(item));
+        order.setAddress(purchase.getOrderAddress());
+        User user = purchase.getCustomer();
+        String theEmail = user.getEmail();
+        User userDB = userRepository.findByEmail(theEmail);
+        if(userDB!=null)
+        {
+            user=userDB;
         }
-    }
-
-    @Test
-    void testGenerateOrderTrackingNumber() {
-        // Call the private method using reflection
-        String trackingNumber = orderService.placeOrder(
-                new Purchase(mockOrder, mockUser, mockOrder.getOrderItems(), mockOrder.getAddress())
-        ).getOrderTrackingNumber();
-
-        assertThat(trackingNumber).isNotEmpty();
+        user.add(order);
+        userRepository.save(user);
+        return new PurchaseResponse(orderTrackingNumber);
     }
 }

@@ -1,4 +1,4 @@
-package pl.tiuprojekt.sandwitch.repo;
+package com.emsi.server.repository;
 
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -25,7 +25,7 @@ public class DatabaseTest
     {
         try (Connection connection = dataSource.getConnection())
         {
-            assertThat(connection.getCatalog()).isEqualTo("sandwitchdatabase");
+            assertThat(connection.getCatalog()).isEqualTo("fooddelivery");
             log.info("catalog:" + connection.getCatalog());
             assertThat(connection.getTransactionIsolation()).isEqualTo(4);
             log.info("isolation_level:" + connection.getTransactionIsolation());
